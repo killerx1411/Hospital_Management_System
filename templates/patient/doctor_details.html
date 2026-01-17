@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<a href="{{ url_for('department_details', dept_id=doctor.department_id) }}" class="btn btn-secondary mb-3">Go Back</a>
+
+<div class="doctor-d">
+ <h2>{{ doctor.user.name }}</h2>
+     <div class="doctor-info">
+ <div class="doctor-text">
+ <p><strong>Qualification:</strong> {{ doctor.specialization }}</p>
+            <p><strong>Department:</strong> {{ doctor.department.name }}</p>
+            <p><strong>Experience:</strong> 
+                {{ doctor.bio or "Experience not given" }}
+            </p>
+             <p>{{ doctor.bio or "No description available." }}</p>
+        </div>
+  <div class="doctor-img">
+            <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" width="120">
+        </div>
+</div>
+<div class="btn-box">
+        <a class="btn btn-primary" 
+           href="{{ url_for('patient_check_availability', doctor_id=doctor.id) }}">
+           Check Availability
+        </a>
+<a class="btn btn-secondary" 
+           href="{{ url_for('department_details', dept_id=doctor.department_id) }}">
+           Back
+        </a>
+    </div>
+
+</div>
+<style>
+.doctor-d{
+    border: 1px solid #ccc;
+    padding: 25px;
+    border-radius: 10px;
+    background: white;
+    width: 60%;
+    margin: auto;
+}
+.doctor-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+.doctor-text {
+    width: 70%;
+    font-size: 1rem;
+}
+.doctorimg {
+    border-radius: 50%;
+}
+.btn-box {
+    margin-top: 25px;
+}
+</style>
+
+{% endblock %}

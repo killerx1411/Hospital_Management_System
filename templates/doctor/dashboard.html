@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Welcome Doctor {{ doctor.user.name }}</h2>
+<div class="section-box">
+    <h3>Upcoming Appointments</h3>
+    <table>
+        <tr>
+            <th>Sr No.</th>
+            <th>Patient Name</th>
+            <th>Date Time</th>
+            <th>Patient History</th>
+            <th>Actions</th>
+        </tr>
+        {% for a in nextapps %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ a.patient.user.name }}</td>
+            <td>{{ a.date.strftime('%Y-%m-%d') }} at {{ a.time.strftime('%H:%M') }}</td>
+            <td>
+                <a class="btn-blue" href="{{ url_for('app_detail_doct', appointment_id=a.id) }}">update</a>
+            </td>
+            <td>
+                <form method="post" action="{{ url_for('app_detail_doct', appointment_id=a.id) }}" style="display:inline;">
+                    <input type="hidden" name="status" value="Completed">
+                    <button class="btn-green">mark as complete</button>
+                </form>
+                <form method="post" action="{{ url_for('app_detail_doct', appointment_id=a.id) }}" style="display:inline;">
+                    <input type="hidden" name="status" value="Cancelled">
+                    <button class="btn-red">cancel</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+<div class="section-box">
+    <h3>Assigned Patients</h3>
+    {% for p in pp %}
+        <div class="assigned-card">
+            {{ p.user.name }}
+            <a class="btn-blue-small" href="{{ url_for('patient_history_doctor', patient_id=p.id) }}">view</a>
+        </div>
+    {% endfor %}
+</div>
+<div class="center-box">
+    <a class="btn-green" href="{{ url_for('doctor_availability') }}">Provide Availability</a>
+</div>
+{% endblock %}

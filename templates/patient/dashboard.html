@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Patient Dashboard</h2>
+    <div class="card mb-4">
+        <div class="card-body"> 
+            <h4>Your Profile</h4>
+            <p><strong>Name:</strong> {{ patient.user.name }}</p>
+            <p><strong>Age:</strong> {{ patient.age }}</p>
+            <p><strong>Gender:</strong> {{ patient.gender }}</p>
+            <p><strong>Phone:</strong> {{ patient.phone }}</p>
+            <p><strong>Address:</strong> {{ patient.address }}</p>
+            <a href="{{ url_for('patient_prof') }}" class="btn btn-primary">Edit Profile</a>
+        </div>
+    </div>
+ <h3>Departments</h3>
+<ul>
+    {% for d in department %}
+    <li>
+        <a class="dept-link" href="{{ url_for('department_details', dept_id=d.id) }}"> {{ d.name }} – {{ d.description }}</a>
+    </li>
+    {% endfor %}
+</ul>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h4>Find a Doctor</h4>
+            <div class="button-row">
+                <a href="{{ url_for('docforpatient') }}" class="btn btn-primary">Browse Doctors</a>
+                <a href="{{ url_for('book_appointment') }}" class="btn btn-primary">Book Appointment</a>
+            </div>
+        </div>
+    </div>
+<div class="card mb-4">
+        <div class="card-body">
+            <h4>Upcoming Appointments</h4>
+            <table class="table table-bordered table-striped mt-3">
+                <thead class="table-light">
+                    <tr>
+                        <th>Doctor</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Cancel</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if upcoming_appointments %}
+                        {% for appt in upcoming_appointments %}
+                        <tr>
+                            <td>{{ appt.doctor.user.name }}</td>
+                            <td>{{ appt.date }}</td>
+                            <td>{{ appt.time }}</td>
+                            <td>{{ appt.status }}</td>
+                            <td>
+                                {% if appt.status != "Completed" %}
+                                <form method="POST" action="{{ url_for('cancel_appointment', appointment_id=appt.id) }}">
+                                    <button class="btn btn-danger btn-sm">Cancel</button>
+                                </form>
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr><td colspan="5" class="text-center">No upcoming appointments</td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h4>Past Appointments</h4>
+
+            <table class="table table-bordered table-striped mt-3">
+                <thead class="table-light">
+                    <tr>
+                        <th>Doctor</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if past_appointments %}
+                        {% for appt in past_appointments %}
+                        <tr>
+                            <td>{{ appt.doctor.user.name }}</td>
+                            <td>{{ appt.date }}</td>
+                            <td>{{ appt.time }}</td>
+                            <td>{{ appt.status }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr><td colspan="4" class="text-center">No past appointments</td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

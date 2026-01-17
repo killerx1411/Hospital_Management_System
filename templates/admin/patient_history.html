@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Patient History</h3>
+<p><strong>Name:</strong> {{ pt.user.name }}</p>
+<p><strong>Phone:</strong> {{ pt.phone }}</p>
+<table class="table table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>Visit No</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Diagnosis</th>
+            <th>Prescription</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for a in appts %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ a.doctor.user.name }}</td>
+            <td>{{ a.date }}</td>
+            <td>{{ a.treatment.diagnosis if a.treatment else 'N/A' }}</td>
+            <td>{{ a.treatment.prescription if a.treatment else 'N/A' }}</td>
+            <td>{{ a.treatment.notes if a.treatment else 'N/A' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Back</a>
+{% endblock %}

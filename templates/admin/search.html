@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Search</h2>
+<form method="GET">
+    <input type="text" name="qr" value="{{ qr }}" placeholder="Search doctors or patients...">
+    <button type="submit">Search</button>
+</form>
+<div class="card">
+    <h3>Doctors</h3>
+    <table>
+        <tr><th>Name</th>
+            <th>Specialization</th>
+        </tr>
+
+        {% for d in doct %}
+        <tr>
+            <td>{{ d.user.name }}</td>
+            <td>{{ d.specialization }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+<div class="card">
+    <h3>Patients</h3>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+        </tr>
+ {% for p in patient %}
+        <tr>
+            <td>{{ p.user.name }}</td>
+            <td>{{ p.user.email }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

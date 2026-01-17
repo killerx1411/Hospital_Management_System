@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Doctors</h2>
+
+<div class="card">
+    <h3>Add Doctor</h3>
+    <form method="POST" action="{{ url_for('add_doc') }}">
+        <label>Name</label>
+        <input type="text" name="name">
+        <label>Email</label>
+        <input type="email" name="email">
+         <label>Password</label>
+        <input type="password" name="password">
+        <label>Specialization</label>
+        <input type="text" name="specialization"><label>Department</label>
+        <select name="department_id">
+            {% for d in dept %}
+            <option value="{{ d.id }}">{{ d.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Add Doctor</button>
+    </form>
+</div>
+
+<div class="card">
+    <h3>Existing Doctors</h3>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Specialization</th>
+            <th>Actions</th>
+        </tr>
+        {% for doc in doctors %}
+        <tr>
+            <td>{{ doc.user.name }}</td>
+            <td>{{ doc.user.email }}</td>
+            <td>{{ doc.specialization }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('admin_blacklist_doctor', doctor_id=doc.id) }}">
+                    <button class="btn" style="background: red;">Blacklist</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

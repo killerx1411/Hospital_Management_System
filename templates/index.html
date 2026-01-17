@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 style="text-align: center;">Welcome to Hospital Management System(HMS)</h1>
+ 
+
+<div class="card" style="text-align: center;">
+    <h1>Departments we currently provide</h1>
+    <ul>
+        {% for d in departments %}
+            <h2>{{ d.name }} – {{ d.description }}</h2>
+        {% endfor %}
+    </ul>
+    <h3>Register or Login to Continue</h3>
+</div>
+{% endblock %}

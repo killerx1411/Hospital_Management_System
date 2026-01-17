@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Patients</h2>
+<form method="GET">
+    <input type="text" name="qr" placeholder="Search patient..." value="{{ qr }}">
+    <button type="submit">Search</button>
+</form>
+<div class="card">
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Blacklist</th>
+        </tr> {% for p in patient %}
+        <tr>
+            <td>{{ p.user.name }}</td>
+            <td>{{ p.user.email }}</td>
+            <td>{{ p.phone }}</td>
+    <td>
+                <form method="POST" action="{{ url_for('blacklist_patient', patient_id=p.id) }}">
+                    <button class="btn" style="background:#d9534f;">Deactivate</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Update Patient History</h3>
+<p><strong>Patient Name:</strong> {{ appointment.patient.user.name }}</p>
+<p><strong>Doctor:</strong> {{ appointment.doctor.user.name }}</p>
+<p><strong>Department:</strong> {{ appointment.doctor.department.name if appointment.doctor.department else '' }}</p>
+<form method="POST">
+    <div class="mb-2">
+        <label>Diagnosis</label>
+        <input type="text" name="diagnosis" value="{{ appointment.treatment.diagnosis if appointment.treatment else '' }}" class="form-control">
+        <!-- prefilles the diagnotis if it exists -->
+    </div>
+    <div class="mb-2">
+        <label>Prescription</label>
+        <input type="text" name="prescription" value="{{ appointment.treatment.prescription if appointment.treatment else '' }}" class="form-control">
+         <!-- same -->
+    </div>
+    <div class="mb-2">
+        <label>Notes</label>
+        <textarea name="notes" class="form-control">{{ appointment.treatment.notes if appointment.treatment else '' }}</textarea>
+    </div>
+    <div class="mb-2">
+        <label>Status</label>
+        <select name="status" class="form-control">
+            <option value="Booked">Booked</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+        </select>
+    </div>
+    <button class="btn btn-success">Save</button>
+</form>
+
+{% endblock %}

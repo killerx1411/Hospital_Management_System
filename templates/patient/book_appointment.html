@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Book Appointment</h2>
+<label>Select Doctor:</label>
+<select id="doctor_select" class="input-box">
+    <option value="">-- select doctor --</option>
+    {% for d in doctors %}
+    <option value="{{ d.id }}">{{ d.user.name }} ({{ d.specialization }})</option>
+    {% endfor %}
+</select>
+<div id="availability_container" class="availability-box"></div>
+<form method="POST" id="bookForm">
+    <input type="hidden" name="doctor_id" id="doctor_id">
+    <input type="hidden" name="date" id="selected_date">
+    <input type="hidden" name="time" id="selected_time">
+    <button class="btn-green" id="bookBtn" style="display:none">Confirm Booking</button>
+</form>
+<style>
+.availability-box {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    background: #f6f9fc;
+}
+.slot-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.slot-date {
+    width: 120px;
+    padding: 8px;
+    text-align: center;
+    background: #dbe6f3;
+    border-radius: 5px;
+    margin-right: 10px;
+    font-weight: bold;
+}
+.slot-btn {
+    padding: 8px 16px;
+    border-radius: 5px;
+    border: none;
+    margin-right: 10px;
+    cursor: pointer;
+    color: white;
+}
+.green {
+    background-color: #2ecc71;
+}
+.red {
+    background-color: #e74c3c;
+}
+.selected {
+    border: 3px solid #0044ff;
+}
+</style>
+<script>
+document.getElementById("doctor_select").addEventListener("change", function() {
+    let docId = this.value;
+    if (!docId) return;
+    document.getElementById("doctor_id").value = docId;
+    fetch(`/patient/load_slots/${docId}`)
+        .then(res => res.json())
+        .then(data => renderAvailability(data.days));
+});
+function renderAvailability(days) {
+    let container = document.getElementById("availability_container");
+    container.innerHTML = "<h3>Doctor's Availability</h3>";
+    days.forEach(d => {
+        let row = document.createElement("div");
+        row.classList.add("slot-row");
+        let dateDiv = document.createElement("div");
+        dateDiv.classList.add("slot-date");
+        dateDiv.innerHTML = d.date;
+        let morningBtn = document.createElement("button");
+        morningBtn.innerHTML = d.morning;
+        morningBtn.classList.add("slot-btn", d.morning_available ? "green" : "red");
+        let eveningBtn = document.createElement("button");
+        eveningBtn.innerHTML = d.evening;
+        eveningBtn.classList.add("slot-btn", d.evening_available ? "green" : "red");
+        morningBtn.onclick = () => selectSlot(morningBtn, d.date, "08:00");
+        eveningBtn.onclick = () => selectSlot(eveningBtn, d.date, "16:00");
+        row.appendChild(dateDiv);
+        row.appendChild(morningBtn);
+        row.appendChild(eveningBtn);
+        container.appendChild(row);
+    });
+}
+let lastSelected = null;
+function selectSlot(btn, date, time) {
+    if (lastSelected) lastSelected.classList.remove("selected");
+    btn.classList.add("selected");
+    lastSelected = btn;
+    document.getElementById("selected_date").value = date;
+    document.getElementById("selected_time").value = time;
+    document.getElementById("bookBtn").style.display = "block";
+}
+</script>
+{% endblock %}

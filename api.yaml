@@ -1,0 +1,378 @@
+openapi: 3.0.0
+info:
+  title: Hospital Management System API
+  version: 1.0.0
+  description: >
+    API Specification for the Flask-based Hospital Management System.
+    Supports Admin, Doctor, and Patient functionalities.
+
+servers:
+  - url: http://localhost:5000
+
+paths:
+
+  /api/login:
+    post:
+      summary: Login user (Admin / Doctor / Patient)
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        200:
+          description: Login successful
+        401:
+          description: Invalid credentials
+
+  /api/register:
+    post:
+      summary: Register a new patient or doctor
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        201:
+          description: User registered
+        400:
+          description: Email already exists
+
+  /api/departments:
+    get:
+      summary: Get list of departments
+      tags: [Public]
+      responses:
+        200:
+          description: List of departments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Department"
+
+  /api/doctors:
+    get:
+      summary: Get list of doctors (optional filters)
+      tags: [Public]
+      parameters:
+        - name: specialization
+          in: query
+          schema: { type: string }
+        - name: department_id
+          in: query
+          schema: { type: integer }
+      responses:
+        200:
+          description: List of doctors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Doctor"
+
+  /api/doctor/{doctor_id}/availability:
+    get:
+      summary: Get availability of a specific doctor
+      tags: [Doctor]
+      parameters:
+        - name: doctor_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: Doctor availability slots
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DoctorAvail"
+
+  /api/appointments:
+    get:
+      summary: Get appointments for logged-in user (patient/doctor)
+      tags: [Appointments]
+      responses:
+        200:
+          description: List of appointments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Appointment"
+
+  /api/appointments/book:
+    post:
+      summary: Book new appointment (patient only)
+      tags: [Appointments]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookAppointmentRequest"
+      responses:
+        201:
+          description: Appointment booked
+        409:
+          description: Slot already booked
+
+  /api/appointments/{appointment_id}/update:
+    post:
+      summary: Doctor updates appointment status + treatment
+      tags: [Doctor]
+      parameters:
+        - name: appointment_id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAppointmentRequest"
+      responses:
+        200:
+          description: Updated successfully
+
+  /api/appointments/{appointment_id}/cancel:
+    post:
+      summary: Cancel appointment (patient or doctor)
+      tags: [Appointments]
+      parameters:
+        - name: appointment_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: Appointment cancelled
+
+  /api/patient/{patient_id}/history:
+    get:
+      summary: Get patient medical & appointment history
+      tags: [Doctor, Admin]
+      parameters:
+        - name: patient_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: Patient history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  patient:
+                    $ref: "#/components/schemas/Patient"
+                  appointments:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Appointment"
+
+  /api/admin/doctors:
+    get:
+      summary: Admin fetches all doctors
+      tags: [Admin]
+      responses:
+        200:
+          description: Doctor list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Doctor"
+
+  /api/admin/patients:
+    get:
+      summary: Admin fetches all patients
+      tags: [Admin]
+      responses:
+        200:
+          description: Patient list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Patient"
+
+  /api/admin/doctor/add:
+    post:
+      summary: Admin adds a new doctor
+      tags: [Admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddDoctorRequest"
+      responses:
+        201:
+          description: Doctor added
+
+  /api/admin/doctor/{doctor_id}/blacklist:
+    post:
+      summary: Blacklist (disable) a doctor
+      tags: [Admin]
+      parameters:
+        - name: doctor_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: Doctor blacklisted
+
+  /api/admin/patient/{patient_id}/blacklist:
+    post:
+      summary: Blacklist (disable) a patient
+      tags: [Admin]
+      parameters:
+        - name: patient_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: Patient blacklisted
+
+  /api/admin/dashboard:
+    get:
+      summary: Admin overview
+      tags: [Admin]
+      responses:
+        200:
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminDashboard"
+
+components:
+
+  schemas:
+
+    RegisterRequest:
+      type: object
+      properties:
+        name: { type: string }
+        email: { type: string }
+        password: { type: string }
+        role: { type: string, enum: [patient, doctor] }
+        age: { type: integer }
+        gender: { type: string }
+        phone: { type: string }
+        address: { type: string }
+        specialization: { type: string }
+        department_id: { type: integer }
+
+    BookAppointmentRequest:
+      type: object
+      properties:
+        doctor_id: { type: integer }
+        date: { type: string, format: date }
+        time: { type: string, format: time }
+
+    UpdateAppointmentRequest:
+      type: object
+      properties:
+        status: { type: string, enum: [Booked, Completed, Cancelled] }
+        diagnosis: { type: string }
+        prescription: { type: string }
+        notes: { type: string }
+
+    AddDoctorRequest:
+      type: object
+      properties:
+        name: { type: string }
+        email: { type: string }
+        password: { type: string }
+        specialization: { type: string }
+        department_id: { type: integer }
+
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string }
+        role: { type: string }
+        active: { type: boolean }
+
+    Department:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        description: { type: string }
+
+    Doctor:
+      type: object
+      properties:
+        id: { type: integer }
+        specialization: { type: string }
+        department_id: { type: integer }
+
+    Patient:
+      type: object
+      properties:
+        id: { type: integer }
+        age: { type: integer }
+        gender: { type: string }
+        phone: { type: string }
+        address: { type: string }
+
+    Appointment:
+      type: object
+      properties:
+        id: { type: integer }
+        patient_id: { type: integer }
+        doctor_id: { type: integer }
+        date: { type: string, format: date }
+        time: { type: string, format: time }
+        status: { type: string }
+        treatment:
+          $ref: "#/components/schemas/Treatment"
+
+    Treatment:
+      type: object
+      properties:
+        diagnosis: { type: string }
+        prescription: { type: string }
+        notes: { type: string }
+
+    DoctorAvail:
+      type: object
+      properties:
+        id: { type: integer }
+        date: { type: string, format: date }
+        start_time: { type: string }
+        end_time: { type: string }
+
+    AdminDashboard:
+      type: object
+      properties:
+        doctorcount: { type: integer }
+        patientcount: { type: integer }
+        appcount: { type: integer }
+        upcoming_appointment:
+          type: array
+          items:
+            $ref: "#/components/schemas/Appointment"

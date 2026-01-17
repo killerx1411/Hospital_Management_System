@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Your Profile</h2>
+
+<form method="POST">
+    <label>Name</label>
+    <input name="name" value="{{ current_user.name }}">
+     <label>Age</label>
+    <input name="age" value="{{ pt.age }}">
+    <label>Gender</label>
+    <input name="gender" value="{{ pt.gender }}">
+    <label>Phone</label>
+    <input name="phone" value="{{ pt.phone }}">
+    <label>Address</label>
+    <textarea name="address">{{ pt.address }}</textarea>
+    <button>Update</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Doctor {{ doctor.user.name }} – Availability</h2>
+<div id="availability_container">
+    <p>Loading availability...</p>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    let docId = "{{ doctor.id }}";
+    fetch(`/patient/load_slots/${docId}`)
+        .then(res => res.json())
+        .then(data => renderAvailability(data.days));
+});
+function renderAvailability(days) {
+    let container = document.getElementById("availability_container");
+    container.innerHTML = "<h3>Doctor's Availability</h3>";
+    days.forEach(d => {
+        let row = document.createElement("div");
+        row.classList.add("slot-row");
+
+        let dateDiv = document.createElement("div");
+        dateDiv.classList.add("slot-date");
+        dateDiv.innerHTML = d.date;
+
+        let morningBtn = document.createElement("div");
+        morningBtn.innerHTML = d.morning;
+        morningBtn.classList.add("slot-btn", d.morning_available ? "green" : "red");
+
+        let eveningBtn = document.createElement("div");
+        eveningBtn.innerHTML = d.evening;
+        eveningBtn.classList.add("slot-btn", d.evening_available ? "green" : "red");
+
+        row.appendChild(dateDiv);
+        row.appendChild(morningBtn);
+        row.appendChild(eveningBtn);
+
+        container.appendChild(row);
+    });
+}
+</script>
+
+<style>
+.slot-row {
+    display: flex;
+    gap: 20px;
+    padding: 10px 0;
+}
+.slot-date {
+    background: #e5ecf7;
+    padding: 8px 12px;
+    border-radius: 6px;
+    width: 120px;
+}
+.slot-btn {
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-weight: bold;
+    color: white;
+}
+.green { background: #28a745; }
+.red   { background: #dc3545; }
+</style>
+
+{% endblock %}

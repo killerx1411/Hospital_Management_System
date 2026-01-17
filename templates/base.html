@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Hospital Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+
+    <div class="navbar">
+        <a href="{{ url_for('index') }}">Home</a>
+        {% if current_user.is_authenticated %}
+        <!-- when autheticated load respective navbar according to their role -->
+            {%if current_user.role=='admin'%}
+                <a href="{{url_for('admin_dashboard')}}">Admin Dashboard</a>
+        <!-- for the admin dashboard -->
+            {% elif current_user.role == 'doctor' %}
+        <!-- for the doctor dashboard -->
+                <a href="{{url_for('doctor_dashboard')}}">Doctor Dashboard</a>
+            {% elif current_user.role == 'patient' %}
+         <!-- for the patient dashboard -->   
+                <a href="{{url_for('patient_dashboard')}}">Patient Dashboard</a>
+            {% endif %}
+        
+        <a href="{{url_for('logout')}}">Logout</a>
+        {% else %}
+        <!-- when not authenticated the user will have two options Login and Register -->
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+        
+    </div>
+
+    <div class="container">
+        <!-- catch the flash we sent from app.py -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <div class="flash">{{ message }}</div>
+        {% endfor %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+
+</body>
+
+</html>

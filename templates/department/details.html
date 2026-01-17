@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Department of {{ dept.name }}</h2>
+
+<a href="{{ url_for('patient_dashboard') }}" class="btn btn-secondary">Back</a>
+<hr>
+<h3>Overview</h3>
+<p>{{ dept.description }}</p>
+<hr>
+<h3>Doctors' List</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Doctor</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for d in doctors %}
+        <tr>
+            <td>Dr. {{ d.user.name }}</td>
+            <td>
+                <a class="btn btn-info btn-sm"
+                    href="{{ url_for('patient_doctor_details', doctor_id=d.id) }}">View Details</a>
+                <a class="btn btn-success btn-sm" 
+                href="{{ url_for('patient_check_availability', doctor_id=d.id) }}">
+                    Check Availability
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

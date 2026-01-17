@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Find a Doctor</h2>
+
+<form method="GET">
+    <!-- to search -->
+    <label>Search by Specialization</label>
+    <input name="specialization" value="{{ specialization }}">
+<label>Search by Name</label>
+    <input name="q2" value="{{ q2 }}">
+<button>Search</button>
+</form>
+<div class="card">
+    <h3>Available Doctors</h3>
+     <table>
+        <tr><th>Name</th><th>Specialization</th></tr>
+        {% for d in doctors %}
+        <tr>
+            <td>{{ d.user.name }}</td>
+            <td>{{ d.specialization }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

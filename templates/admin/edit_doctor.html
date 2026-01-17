@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit Doctor Profile</h2>
+<form method="POST">
+<div class="form-group">
+        <label>Doctor Name</label>
+        <input type="text" name="name" class="form-control" value="{{ doctor.user.name }}" required>
+    </div>
+<div class="form-group mt-2">
+        <label>Email</label>
+        <input type="email" name="email" class="form-control" value="{{ doctor.user.email }}" required>
+    </div>
+<div class="form-group mt-2">
+        <label>Specialization</label>
+        <input type="text" name="spec" class="form-control" value="{{ doctor.specialization }}" required> </div>
+ <div class="form-group mt-2">
+        <label>Department</label>
+        <select name="department" class="form-control">
+            {% for dep in departments %}
+                <option value="{{ dep.id }}" {% if doctor.department_id==dep.id %}selected{% endif %}>
+                    {{ dep.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div><button class="btn btn-primary mt-3">Update</button>
+
+</form>
+
+{% endblock %}

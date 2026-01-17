@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>The Doctor's Availability</h2>
+<form method="POST">
+    <table class="availability-table">
+        {% for d in days %}
+        <tr> <td class="date-box">{{ d.strftime('%d/%m/%Y') }}</td>
+            <td>
+                <!-- I have created two slots for each doctor as per the drive photo one morning and one evening -->
+                <label class="slot {{ 'selected' if ('morning', d) in existing else '' }}">
+                    <input type="checkbox" name="morning_{{ d }}" {% if ('morning', d) in existing %}checked{% endif %}>
+                    08:00 - 12:00 am
+                </label>
+            </td> 
+            <td>
+                <label class="slot {{ 'selected' if ('evening', d) in existing else '' }}">
+                    <input type="checkbox" name="evening_{{ d }}" {% if ('evening', d) in existing %}checked{% endif %}>
+                    04:00 - 09:00 pm
+                </label>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <button class="btn-green" type="submit">Save</button>
+</form>
+<style>
+.date-box {
+    background:#cfe2ff;
+    padding:8px 12px;
+    border-radius:6px;
+    font-weight:600;
+}
+.slot {
+    display:inline-block;
+    padding:8px 12px;
+    border:2px solid red;
+    border-radius:6px;
+    cursor:pointer;
+}
+.slot.selected {
+    border:2px solid green;
+}
+.slot input {
+    display:none;
+}
+</style>
+{% endblock %}

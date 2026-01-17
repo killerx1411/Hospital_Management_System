@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h2>Patient History</h2>
+    <p>Patient Name:  {{ patient.user.name }}</p>
+    <p>Doctor:{{ doctor.user.name }}</p>
+    <p>Department:{{ doctor.department.name }}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Visit No.</th>
+                <th>Date</th>
+                <th>Visit Type</th>
+                <th>Diagnosis</th>
+                <th>Prescription</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ap in appointments %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ ap.date }}</td>
+                <td>In-person</td>
+                <td>{{ ap.treatment.diagnosis if ap.treatment else '-' }}</td>
+                <td>{{ ap.treatment.prescription if ap.treatment else '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('doctor_dashboard') }}" class="btn-blue">Back</a>
+</div>
+{% endblock %}
